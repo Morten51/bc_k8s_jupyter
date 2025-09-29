@@ -9,6 +9,17 @@
    user = OodSupport::User.new
 %>
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # Using a unique name for the debug configmap
+  name: debug-vars-<%= user.name %>
+  namespace: user
+data:
+  # This will capture the exact value the template sees
+  service_account_name_from_env: "<%= ENV['SERVICE_ACCOUNT_NAME'] %>"
+  user_from_env: "<%= user.name %>"
+---
 script:
   accounting_id: "<%= account %>"
   wall_time: "<%= wall_time.to_i * 3600 %>"
