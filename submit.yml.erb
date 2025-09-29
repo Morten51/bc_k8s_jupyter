@@ -13,7 +13,7 @@ script:
   accounting_id: "<%= account %>"
   wall_time: "<%= wall_time.to_i * 3600 %>"
   native:
-    service_account_name: "<%= user.name %>"
+    service_account_name: "<%= ENV['SERVICE_ACCOUNT_NAME'] %>"
     container:
       name: "jupyter"
       image: "scipy-notebook:python-3.9.2"
