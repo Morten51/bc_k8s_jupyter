@@ -12,8 +12,8 @@
 script:
   accounting_id: "<%= account %>"
   wall_time: "<%= wall_time.to_i * 3600 %>"
-  service_account_name: "<%= user.name %>"
   native:
+    service_account_name: "<%= user.name %>"
     container:
       name: "jupyter"
       image: "scipy-notebook:python-3.9.2"
