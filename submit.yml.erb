@@ -12,6 +12,7 @@
 script:
   accounting_id: "<%= account %>"
   wall_time: "<%= wall_time.to_i * 3600 %>"
+  service_account_name: "<%= ENV['SERVICE_ACCOUNT_NAME'] %>"
   native:
     container:
       name: "jupyter"
