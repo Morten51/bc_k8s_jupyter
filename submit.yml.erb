@@ -9,10 +9,49 @@
    user = OodSupport::User.new
 %>
 ---
+# 1. A dedicated ServiceAccount for this specific job
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jupyter-<%= user.name %>-sa
+  namespace: user
+
+---
+# 2. A Role that can only get/create ONE specific secret
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: jupyter-<%= user.name %>-secret-manager
+  namespace: user
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  # This is the crucial part: it only applies to this one secret name
+  resourceNames: ["jupyter-<%= user.name %>-secret"]
+  verbs: ["get", "create"]
+
+---
+# 3. A RoleBinding to connect the ServiceAccount and the Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jupyter-<%= user.name %>-secret-binding
+  namespace: user
+subjects:
+- kind: ServiceAccount
+  name: jupyter-<%= user.name %>-sa # <-- The ServiceAccount from above
+  namespace: user
+roleRef:
+  kind: Role
+  name: jupyter-<%= user.name %>-secret-manager # <-- The Role from above
+  apiGroup: rbac.authorization.k8s.io
+
+---
 script:
   accounting_id: "<%= account %>"
   wall_time: "<%= wall_time.to_i * 3600 %>"
   native:
+    service_account_name: "jupyter-<%= user.name %>-sa"
     container:
       name: "jupyter"
       image: "scipy-notebook:python-3.9.2"
